@@ -1,0 +1,32 @@
+import momi
+
+freedman_model=momi.DemographicModel(
+    N_e=44200, gen_time=3, muts_per_gen= 1e-8)
+    
+##Adding leaves
+
+
+
+N_DNG=(1800+2100)/2   
+N_NGS=(1800+2100)/2  
+N_BSJ=(2300+2900)/2  
+N_CHW=(4700+6100)/2  
+
+# add DNG leaf at t=0 
+freedman_model.add_leaf("DNG", N=N_DNG)
+# add  NGS leaf at t=0,
+freedman_model.add_leaf("NGS", N=N_NGS)
+# add BSJ leaf at t=0
+freedman_model.add_leaf("BSJ", N=N_BSJ)
+# add CHW lead at t=0
+freedman_model.add_leaf("CHW", N_CHW)
+
+#Demographic events
+T1=3
+model.move_lineages("DNG","NGS", t=T1)
+model.move_lineages("NGS", "BSJ", t=12.8e3)
+model.move_lineages("BSJ","CHW", t=14.9e3)
+
+
+
+
