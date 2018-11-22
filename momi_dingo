@@ -9,44 +9,28 @@ python -m momi.extract_sfs dem1.sfs.gz 100 dem_1chrom1.snpAlleleCounts.gz
 sfs=momi.Sfs.load("/Users/anthonykwong/work/dingo/empirical_data/dem1.sfs.gz")
 
 #model for inference
-Ne=44200
+Ne=(1800+2100)/2  
 
 freedman_model=momi.DemographicModel(
     N_e=Ne, gen_time=3, muts_per_gen= 1e-8)
     
 ##Adding leaves
 
-N_Dingo=(1800+2100)/2   
-N_NGSD=(1800+2100)/2  
-#N_BSJ=(2300+2900)/2  
- 
+freedman_model.add_leaf("Dingo", N=Ne, t=(805+957)/2)
+freedman_model.add_leaf("BorneoVD", N=Ne)
+freedman_model.add_leaf("NGSD", N=Ne)
+freedman_model.add_leaf("VietnameVD", N=Ne)
 
-# add ancient DNG leaf 
-freedman_model.add_leaf("Dingo", N=N_Dingo, t=(805+957)/2)
-# add  NGS leaf at t=0,
-freedman_model.add_leaf("NGSD", N=N_NGSD)
-# add BSJ leaf at t=0
-#freedman_model.add_leaf("BSJ", N=N_BSJ)
-
-# add VDs lead at t=0
-freedman_model.add_leaf("BorneoVD", N=N_Dingo)
-freedman_model.add_leaf("TaiwanVD", N=N_Dingo)
-freedman_model.add_leaf("VietnamVD", N=N_Dingo)
-freedman_model.add_leaf("PNGVD", N=N_Dingo)
 
 #adding parameters
-freedman_model.add_time_param("t_split_DNG_NGS", lower=750)
-
-#clustering VDs to PNGVD
-freedman_model.add_time_param
+freedman_model.add_time_param("t_split_DNG_NGSD", lower=(805+957)/2)
+freedman_model.add_time_param("t_split_Borneo_DNG", lower=(805+957)/2, lower_constraints="t_split_DNG_NGS")
+freedman_model.add_time_param("t_split_Viet_Borneo",lower=(805+957)/2, lower_constraints="t_split_Borneo_DNG" )
 
 #Demographic events
 freedman_model.move_lineages("DNG","NGS", t="t_split_DNG_NGS")
-
-
-
-#freedman_model.move_lineages("NGS", "BSJ", t=12.8e3)
-#freedman_model.move_lineages("BSJ","CHW", t=14.9e3, N=Ne)
+freedman_model.move_lineages("BorneoVD", "NGSD", t="t_split_Borneo_DNG")
+freedman_model.move_lineages("VietnameVD", "NGSD", t="t_split_Viet_Borneo")
 
 #inference
 freedman_model.optimize(method="TNC")
@@ -60,6 +44,9 @@ for i in range (500,12000,1000):
 
 fig=momi.DemographyPlot(freedman_model,["DNG","NGS"],figsize=(6,8),linthreshy=1e5,
 major_yticks=yticks,pulse_color_bounds=(0,0.25))
+
+
+##STOP HERE
 
 
 #Loading vcf data, do in terminal (change this later)
