@@ -24,13 +24,13 @@ freedman_model.add_leaf("VietnameVD", N=Ne)
 
 #adding parameters
 freedman_model.add_time_param("t_split_DNG_NGSD", lower=(805+957)/2)
-freedman_model.add_time_param("t_split_Borneo_DNG", lower_constraints="t_split_DNG_NGS")
-freedman_model.add_time_param("t_split_Viet_Borneo",lower_constraints="t_split_Borneo_DNG" )
+freedman_model.add_time_param("t_split_Borneo_DNG", lower_constraints=["t_split_DNG_NGSD"])
+freedman_model.add_time_param("t_split_Viet_Borneo",lower_constraints=["t_split_Borneo_DNG"] )
 
 #Demographic events
-freedman_model.move_lineages("DNG","NGS", t="t_split_DNG_NGS")
-freedman_model.move_lineages("BorneoVD", "NGSD", t=["t_split_Borneo_DNG"])
-freedman_model.move_lineages("VietnameVD", "NGSD", t=["t_split_Viet_Borneo"])
+freedman_model.move_lineages("Dingo","NGSD", t="t_split_DNG_NGSD")
+freedman_model.move_lineages("BorneoVD", "NGSD", t="t_split_Borneo_DNG")
+freedman_model.move_lineages("NGSD", "VietnameVD", t="t_split_Viet_Borneo")
 
 #inference
 freedman_model.set_data(sfs)
@@ -43,7 +43,7 @@ yticks=[]
 for i in range (500,12000,1000):
     yticks.append(i)
 
-fig=momi.DemographyPlot(freedman_model,["DNG","NGS"],figsize=(6,8),linthreshy=1e5,
+fig=momi.DemographyPlot(freedman_model,["Dingo","BorneoVD","NGSD","VietnameVD"],figsize=(6,8),linthreshy=1e5,
 major_yticks=yticks,pulse_color_bounds=(0,0.25))
 
 
